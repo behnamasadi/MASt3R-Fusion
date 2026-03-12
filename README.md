@@ -87,10 +87,35 @@ Then, clone and install this project:
 ```bash
 git clone https://github.com/GREAT-WHU/MASt3R-Fusion.git --recursive
 cd MASt3R-Fusion/
-pip install -e thirdparty/mast3r
+pip install --no-build-isolation -e thirdparty/mast3r
 pip install -e thirdparty/in3d
 pip install --no-build-isolation -e .
 ```
+
+Optional runtime dependencies:
+
+```bash
+pip install --no-build-isolation -e "thirdparty/mast3r[full,retrieval]"
+pip install --no-build-isolation -e ".[full]"
+```
+
+Optional native extensions:
+
+```bash
+cd thirdparty/mast3r/asmk
+python setup.py build_ext --inplace
+
+cd ../dust3r/croco/models/curope
+python setup.py build_ext --inplace
+```
+
+Notes:
+- The editable installs above now install the local packages without forcing pip to resolve all runtime dependencies up front. This makes the repository installable in restricted or offline environments.
+- Use `--no-build-isolation` for both `thirdparty/mast3r` and the root package. Otherwise pip will create an isolated build environment and try to re-download build tools even if they are already installed.
+- Runtime dependencies were moved to optional extras: `thirdparty/mast3r[full,retrieval]` and `.[full]`. Install them when you want the full feature set, or provide them from a local wheelhouse/package cache in offline environments.
+- `curope` is optional. If it is not compiled, MASt3R falls back to a slower PyTorch RoPE implementation.
+- `asmk` is only required for retrieval features. Build it in place if you need MASt3R retrieval/codebook support.
+- The root `setup.py` now tolerates environments without a visible CUDA device and without importing torch during metadata generation, so packaging no longer fails early on CPU-only or restricted systems.
 
 Setup the checkpoints for MASt3R and retrieval.  The license for the checkpoints and more information on the datasets used is written [here](https://github.com/naver/mast3r/blob/mast3r_sfm/CHECKPOINTS_NOTICE).
 ```

@@ -1,4 +1,5 @@
 *.pt
+*.pth
 *.h5
 *.pkl
 *.npz
@@ -7,3 +8,6 @@
 temp*
 thirdparty*
 evo*
+build/
+*.egg-info/
+checkpoints/
